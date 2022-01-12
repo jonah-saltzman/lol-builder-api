@@ -1,13 +1,18 @@
 import express from 'express'
-const app = express()
-const port = 8080 // default port to listen
+import dotenv from 'dotenv'
+import Server from './server'
+import crud from 'postgres-queries'
+dotenv.config()
+const port = parseInt(process.env.PORT, 10) // default port to listen
 
-// define a route handler for the default home page
-app.get('/', (req, res) => {
-	res.send('Hello world!')
-})
+// const userQuery = crud.crud({
+//     table: 'users',
+//     primaryKey: 'user_id',
+//     writeableCols: ['user_id', 'email', 'password', 'tokens', 'invalid_tokens', 'created', 'modified']
+// })
 
-// start the Express server
-app.listen(port, () => {
-	console.log(`server started at http://localhost:${port}`)
+const server = new Server()
+server.start(port).then(async () => {
+    const result = await server.db.query('SELECT * FROM "user".users')
+    console.log(result)
 })
