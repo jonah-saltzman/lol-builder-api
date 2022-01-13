@@ -1,6 +1,7 @@
 import express, { Application, Router } from 'express'
 import bodyParser from 'body-parser'
 import db from './db/init'
+import signup from './handlers/signup'
 
 class Server {
 	private app
@@ -14,7 +15,7 @@ class Server {
 	}
 
 	private config() {
-		this.app.use(bodyParser.urlencoded({ extended: true }))
+		this.app.use(bodyParser.json())
 	}
 	private dbConnect() {
 		this.db.connect()
@@ -23,6 +24,7 @@ class Server {
         this.app.get('/', (req, res) => {
             res.send('You are connected')
         })
+        this.app.post('/signup', signup)
     }
     public start(port: number) {
         return new Promise((resolve, reject) => {

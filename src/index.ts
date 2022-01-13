@@ -16,3 +16,5 @@ server.start(port).then(async () => {
     const result = await server.db.query('SELECT * FROM "user".users')
     console.log(result)
 })
+
+export const db = server.db

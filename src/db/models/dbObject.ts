@@ -1,11 +1,9 @@
 import database from '../init'
+import { db } from '../../index'
 
 class DbObject {
-    private db: typeof database
+    public db = db
 
-    constructor(db: typeof database) {
-        this.db = db
-    }
 }
 
 export default DbObject

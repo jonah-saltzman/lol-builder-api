@@ -1,5 +1,9 @@
 import { Client } from 'pg'
 
+interface DbResponse {
+    rowCount: number
+}
+
 class Postgres {
     public db
     private configuration = {
@@ -22,12 +26,15 @@ class Postgres {
         await this.db.connect()
     }
     public async query(query: string) {
-        return new Promise(async (resolve, reject) => {
+        return new Promise<DbResponse>(async (resolve, reject) => {
             try {
                 const res = await this.db.query(query)
+                console.log('db response:')
+                console.log(res)
                 resolve(res)
             } catch (err) {
-                reject(err)
+                console.error(err)
+                reject(false)
             }
         })
     }
