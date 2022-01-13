@@ -1,31 +1,27 @@
-import { tables, dbOps as ops } from '../strings'
-import newQuery from '../queries'
-import { db } from '../../index'
+import { tables, dbOps as ops } from '../../strings'
+import newQuery from './queries'
+import { db } from '../../../index'
 
 import { v4 } from 'uuid'
 import bcrypt from 'bcrypt'
 
-interface UserData {
-	db: typeof db
+export interface UserInfo {
+    userId: string
 
-	data: {
-		userId: string
+    email?: string
 
-		email?: string
+    password?: string
 
-		password?: string
+    tokens: string[]
 
-		tokens: string[]
+    invalidTokens: string[]
 
-		invalidTokens: string[]
+    created: string
 
-		created: Date
-
-		modified: Date
-	}
+    modified: string
 }
 
-class User implements UserData {
+class User {
 	constructor(connection: typeof db, pass: string, email?: string) {
 		this.data = {
 			userId: v4(),
@@ -40,7 +36,7 @@ class User implements UserData {
 		this.db = connection
 	}
 
-	static async createOne(pass: string, email?: string) {
+	static async createOne(pass: string, email?: string): Promise<User> {
 		const newUser = new this(db, pass, email)
 		console.log('creating user:')
 		console.log(newUser.data)
@@ -72,15 +68,15 @@ class User implements UserData {
 		modified: Date
 	}
 
-	async checkPassword(pass: string) {
+	async checkPassword(pass: string): Promise<boolean> {
 		return await bcrypt.compare(pass, this.data.password)
 	}
 
-    created() {
+    created(): boolean {
         return this.exists
     }
 
-	private async create() {
+	private async create(): Promise<boolean> {
 		const query = newQuery(tables.user, ops.new, this.marshal())
 		const response = await this.db.query(query)
         if (response.rowCount === 1) {
@@ -91,7 +87,7 @@ class User implements UserData {
 		return false
 	}
 
-	public marshal() {
+	public marshal(): UserInfo {
 		const pgData = {
 			userId: this.data.userId,
 			email: this.data.email ? this.data.email : null,

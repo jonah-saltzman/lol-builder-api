@@ -1,5 +1,5 @@
 import * as express from "express";
-import User from "../db/models/user"
+import User from "../db/models/User/user"
 import { db } from '../index'
 
 async function handleSignup(req: express.Request, res: express.Response) {

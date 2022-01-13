@@ -1,6 +1,7 @@
-import { qString, Query } from './strings'
+import { qString, Query } from '../../strings'
+import { UserInfo } from './user'
 
-function queryConstructor(table: Query, op: Query, values: object) {
+function queryConstructor(table: Query, op: Query, values: UserInfo) {
     const o = qString(op)
 	const t = qString(table)
 	const vArr = []
