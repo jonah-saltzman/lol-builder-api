@@ -6,38 +6,38 @@ import { v4 } from 'uuid'
 import bcrypt from 'bcrypt'
 
 export interface UserInfo {
-    userId: string
+    userId?: string
 
     email?: string
 
     password?: string
 
-    tokens: string[]
+    tokens?: string[]
 
-    invalidTokens: string[]
+    invalidTokens?: string[]
 
-    created: string
+    created?: number
 
-    modified: string
+    modified: number
 }
 
 class User {
-	constructor(connection: typeof db, pass: string, email?: string) {
+	constructor(connection: typeof db, init: UserInfo) {
 		this.data = {
 			userId: v4(),
-			password: bcrypt.hashSync(pass, 10),
-			created: new Date(),
-			modified: new Date(),
+			password: bcrypt.hashSync(init.password, 10),
+			created: new Date().getTime(),
+			modified: new Date().getTime(),
 			tokens: [],
 			invalidTokens: [],
-			email: email ? email : null,
+			email: init.email ? init.email : null,
 		}
         this.exists = false
 		this.db = connection
 	}
 
-	static async createOne(pass: string, email?: string): Promise<User> {
-		const newUser = new this(db, pass, email)
+	static async createOne(init: UserInfo): Promise<User> {
+		const newUser = new this(db, init)
 		console.log('creating user:')
 		console.log(newUser.data)
 		if (await newUser.create()) {
@@ -63,9 +63,9 @@ class User {
 
 		invalidTokens: string[]
 
-		created: Date
+		created: number
 
-		modified: Date
+		modified: number
 	}
 
 	async checkPassword(pass: string): Promise<boolean> {
@@ -95,8 +95,8 @@ class User {
 			tokens: this.data.tokens.length > 0 ? this.data.tokens : null,
 			invalidTokens:
 				this.data.invalidTokens.length > 0 ? this.data.invalidTokens : null,
-			created: this.data.created.toISOString(),
-			modified: this.data.modified.toISOString(),
+			created: this.data.created,
+			modified: this.data.modified,
 		}
 		return pgData
 	}
